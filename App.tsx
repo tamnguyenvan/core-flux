@@ -251,11 +251,11 @@ const App: React.FC = () => {
         <div
           key={`slot-${x}-${y}`}
           onClick={() => handlePlaceTile(x, y)}
-          className="w-full h-full rounded-lg transition-colors cursor-pointer group flex items-center justify-center relative overflow-hidden"
+          className="w-full h-full rounded-md sm:rounded-lg transition-colors cursor-pointer group flex items-center justify-center relative overflow-hidden"
           style={{ backgroundColor: currentTheme.slot }}
         >
           <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity" style={{ backgroundColor: currentTheme.accent }} />
-          <div className="w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-40 bg-white" />
+          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full opacity-0 group-hover:opacity-40 bg-white" />
         </div>
       );
     }
@@ -264,13 +264,14 @@ const App: React.FC = () => {
     const bgColor = TILE_COLORS[val] || '#333';
     const textColor = isStone ? "#fff" : (val <= 4 ? "#776e65" : "#ffffff");
     const isNewMerged = lastMergePos?.x === x && lastMergePos?.y === y;
+    const textSize = val > 99 ? 'text-sm sm:text-base' : val > 9 ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl';
 
     return (
       <div
         key={`tile-${x}-${y}-${val}`}
-        className={`w-full h-full rounded-lg flex items-center justify-center text-2xl font-black shadow-md transform transition-all 
+        className={`w-full h-full rounded-md sm:rounded-lg flex items-center justify-center font-black shadow-md transform transition-all ${textSize}
           ${'animate-in zoom-in duration-300'}
-          ${isStone ? 'border-2 border-white/10 shadow-inner' : ''}`}
+          ${isStone ? 'border border-white/10 shadow-inner' : ''}`}
         style={{
           backgroundColor: isStone ? (themeIndex === 0 ? "#4B5563" : "#111827") : bgColor,
           color: textColor,
@@ -292,17 +293,17 @@ const App: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen w-full flex flex-col items-center p-4 transition-colors duration-500 overflow-hidden"
+      className="min-h-screen w-full flex flex-col items-center p-2 sm:p-4 transition-colors duration-500 overflow-hidden"
       style={{ backgroundColor: currentTheme.bg, color: currentTheme.textPrimary }}
     >
       {/* Header */}
-      <div className="w-full max-w-md flex justify-between items-center mb-6 mt-4">
+      <div className="w-full max-w-md flex justify-between items-center mb-4 sm:mb-6 mt-2 sm:mt-4 px-2 sm:px-0">
         <div>
-          <h1 className="text-4xl font-black tracking-tighter leading-tight italic" style={{ color: currentTheme.accent }}>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tighter leading-tight italic" style={{ color: currentTheme.accent }}>
             CORE FLUX
           </h1>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getPhase().color }} />
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ backgroundColor: getPhase().color }} />
             <span className="text-[10px] font-black tracking-[0.2em] opacity-60 uppercase">{getPhase().label}</span>
           </div>
         </div>
@@ -318,17 +319,17 @@ const App: React.FC = () => {
       </div>
 
       {/* Stats - ENLARGED LABELS AND VALUES */}
-      <div className="w-full max-w-md grid grid-cols-2 gap-4 mb-8">
-        <div className="rounded-2xl p-5 flex flex-col items-center justify-center shadow-lg relative overflow-hidden group border border-white/5" style={{ backgroundColor: currentTheme.slot }}>
-          <span className="text-sm font-black uppercase tracking-[0.2em] opacity-50 mb-1" style={{ color: currentTheme.textPrimary }}>Score</span>
-          <span className="text-4xl sm:text-5xl font-black leading-none tabular-nums">{score}</span>
+      <div className="w-full max-w-md grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-8 px-2 sm:px-0">
+        <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center shadow-lg relative overflow-hidden group border border-white/5" style={{ backgroundColor: currentTheme.slot }}>
+          <span className="text-xs sm:text-sm font-black uppercase tracking-[0.15em] opacity-50 mb-0.5 sm:mb-1" style={{ color: currentTheme.textPrimary }}>Score</span>
+          <span className="text-2xl sm:text-4xl md:text-5xl font-black leading-none tabular-nums">{score}</span>
         </div>
-        <div className="rounded-2xl p-5 flex flex-col items-center justify-center shadow-lg relative overflow-hidden border border-white/5" style={{ backgroundColor: currentTheme.slot }}>
-          <div className="flex items-center gap-1.5 mb-1">
-            <Trophy size={14} color="#FFD700" fill="#FFD700" />
-            <span className="text-sm font-black uppercase tracking-[0.2em] opacity-50" style={{ color: currentTheme.textPrimary }}>Best</span>
+        <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center shadow-lg relative overflow-hidden border border-white/5" style={{ backgroundColor: currentTheme.slot }}>
+          <div className="flex items-center gap-1 sm:gap-1.5 mb-0.5 sm:mb-1">
+            <Trophy size={12} sm:size={14} color="#FFD700" fill="#FFD700" />
+            <span className="text-xs sm:text-sm font-black uppercase tracking-[0.15em] opacity-50" style={{ color: currentTheme.textPrimary }}>Best</span>
           </div>
-          <span className="text-4xl sm:text-5xl font-black leading-none tabular-nums">{bestScore}</span>
+          <span className="text-2xl sm:text-4xl md:text-5xl font-black leading-none tabular-nums">{bestScore}</span>
           <button
             onClick={() => handleShare(bestScore)}
             className="absolute top-2 right-2 p-1.5 opacity-70 hover:opacity-100 bg-black/20 rounded-lg transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current"
@@ -342,11 +343,11 @@ const App: React.FC = () => {
       </div>
 
       {/* Next Tile Preview */}
-      <div className="w-full max-w-md flex justify-between items-end mb-6 px-2">
-        <div className="flex flex-col gap-2">
-          <span className="text-xs font-black opacity-50 tracking-widest" style={{ color: currentTheme.textPrimary }}>NEXT FLUX</span>
+      <div className="w-full max-w-md flex justify-between items-end mb-4 sm:mb-6 px-2">
+        <div className="flex flex-col gap-1 sm:gap-2">
+          <span className="text-[10px] sm:text-xs font-black opacity-50 tracking-widest" style={{ color: currentTheme.textPrimary }}>NEXT FLUX</span>
           <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-xl border-4 transition-all duration-300"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl font-black shadow-xl border-2 sm:border-4 transition-all duration-300"
             style={{
               backgroundColor: TILE_COLORS[nextTile],
               color: nextTile <= 4 ? "#776e65" : "#ffffff",
@@ -359,20 +360,20 @@ const App: React.FC = () => {
 
         <button
           onClick={resetGame}
-          className="flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest shadow-lg hover:brightness-110"
+          className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm tracking-widest shadow-lg hover:brightness-110"
           style={{ backgroundColor: currentTheme.accent, color: '#fff' }}
         >
-          <RotateCcw size={18} />
-          RESET
+          <RotateCcw size={16} className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">RESET</span>
         </button>
       </div>
 
       {/* Game Board */}
       <div
-        className="w-full max-w-md aspect-square rounded-[2rem] p-4 shadow-2xl relative border-4"
+        className="w-full max-w-[90vw] sm:max-w-md aspect-square rounded-2xl sm:rounded-[2rem] p-2 sm:p-4 shadow-2xl relative border-2 sm:border-4"
         style={{ backgroundColor: currentTheme.board, borderColor: currentTheme.slot }}
       >
-        <div className="w-full h-full grid grid-cols-5 grid-rows-5 gap-2 relative">
+        <div className="w-full h-full grid grid-cols-5 grid-rows-5 gap-1 sm:gap-2 relative">
           {grid.map((row, y) => row.map((val, x) => renderTile(val, x, y)))}
 
           {/* Explosion Layer */}
@@ -502,7 +503,7 @@ const App: React.FC = () => {
       )}
 
       {/* Footer Branding */}
-      <p className="mt-auto mb-6 text-[11px] font-black opacity-20 uppercase tracking-[0.5em]">
+      <p className="mt-auto mb-4 sm:mb-6 text-[10px] sm:text-[11px] font-black opacity-20 uppercase tracking-[0.5em] px-2 text-center">
         CORE FLUX LABS // BUILD 12.2025
       </p>
     </div>

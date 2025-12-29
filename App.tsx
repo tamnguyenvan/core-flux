@@ -216,7 +216,7 @@ const App: React.FC = () => {
       <div 
         key={`tile-${x}-${y}-${val}`}
         className={`w-full h-full rounded-lg flex items-center justify-center text-2xl font-black shadow-md transform transition-all 
-          ${isNewMerged ? 'animate-merge-pop z-10' : 'animate-in zoom-in duration-300'}
+          ${'animate-in zoom-in duration-300'}
           ${isStone ? 'border-2 border-white/10 shadow-inner' : ''}`}
         style={{ 
           backgroundColor: isStone ? (themeIndex === 0 ? "#4B5563" : "#111827") : bgColor, 
@@ -302,7 +302,7 @@ const App: React.FC = () => {
           style={{ backgroundColor: currentTheme.accent, color: '#fff' }}
         >
           <RotateCcw size={18} />
-          STABILIZE
+          RESET
         </button>
       </div>
 

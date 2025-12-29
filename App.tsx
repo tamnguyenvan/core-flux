@@ -370,10 +370,10 @@ const App: React.FC = () => {
                     <button 
                       key={t.id} 
                       onClick={() => setThemeIndex(idx)} 
-                      className={`h-16 rounded-[1.5rem] border-4 ${themeIndex === idx ? 'shadow-2xl' : 'opacity-30 grayscale hover:grayscale-0 hover:opacity-100'}`} 
+                      className={`h-16 rounded-[1.5rem] border-4 ${themeIndex === idx ? 'shadow-2xl' : 'opacity-80 hover:opacity-100'}`} 
                       style={{ 
                         backgroundColor: t.bg, 
-                        borderColor: themeIndex === idx ? t.accent : t.slot 
+                        borderColor: t.accent 
                       }} 
                     />
                   ))}

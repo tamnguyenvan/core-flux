@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, RotateCcw, Volume2, VolumeX, X, Trophy, Share2, ShieldAlert } from 'lucide-react';
 import { THEMES, GRID_SIZE, TILE_COLORS } from './constants';
-import { GameState, TileValue, Point } from './types';
+import { TileValue, Point } from './types';
 import { audioService } from './services/audioService';
 
 interface Explosion {
@@ -24,9 +24,9 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [themeIndex, setThemeIndex] = useState(0);
   const [sfxOn, setSfxOn] = useState(true);
-  const [lastMergePos, setLastMergePos] = useState<{x: number, y: number} | null>(null);
+  const [lastMergePos, setLastMergePos] = useState<{ x: number, y: number } | null>(null);
   const [explosions, setExplosions] = useState<Explosion[]>([]);
-  
+
   const currentTheme = THEMES[themeIndex];
 
   // --- Effects ---
@@ -102,7 +102,7 @@ const App: React.FC = () => {
     };
 
     if (navigator.share) {
-      try { await navigator.share(shareData); } catch (err) {}
+      try { await navigator.share(shareData); } catch (err) { }
     } else {
       const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareData.text)}&url=${encodeURIComponent(shareData.url)}`;
       window.open(xUrl, '_blank');
@@ -116,10 +116,10 @@ const App: React.FC = () => {
 
     const newGrid = grid.map(row => [...row]);
     newGrid[y][x] = nextTile;
-    
+
     let currentScoreAdd = 0;
     let hasMerged = false;
-    let mergeCoords: {x: number, y: number} | null = null;
+    let mergeCoords: { x: number, y: number } | null = null;
     let shatteredStones: Point[] = [];
 
     const resolveMerges = (px: number, py: number, gridToMutate: TileValue[][]) => {
@@ -129,7 +129,7 @@ const App: React.FC = () => {
       const neighbors: Point[] = [
         { x: px, y: py - 1 }, { x: px, y: py + 1 },
         { x: px - 1, y: py }, { x: px + 1, y: py }
-      ].filter(p => 
+      ].filter(p =>
         p.x >= 0 && p.x < GRID_SIZE && p.y >= 0 && p.y < GRID_SIZE
       );
 
@@ -138,7 +138,7 @@ const App: React.FC = () => {
       if (matches.length > 0) {
         hasMerged = true;
         mergeCoords = { x: px, y: py };
-        
+
         matches.forEach(n => {
           gridToMutate[n.y][n.x] = null;
           currentScoreAdd += val;
@@ -147,7 +147,7 @@ const App: React.FC = () => {
         const newValue = val * 2;
         gridToMutate[py][px] = newValue;
         currentScoreAdd += newValue;
-        
+
         neighbors.forEach(n => {
           if (gridToMutate[n.y][n.x] === -1) {
             gridToMutate[n.y][n.x] = null;
@@ -173,20 +173,20 @@ const App: React.FC = () => {
     }
 
     if (score > 2000 && Math.random() < 0.08) {
-       const emptyCells: Point[] = [];
-       newGrid.forEach((r, ry) => r.forEach((c, rx) => {
-         if (c === null) emptyCells.push({x: rx, y: ry});
-       }));
-       if (emptyCells.length > 5) {
-         const target = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-         newGrid[target.y][target.x] = -1;
-       }
+      const emptyCells: Point[] = [];
+      newGrid.forEach((r, ry) => r.forEach((c, rx) => {
+        if (c === null) emptyCells.push({ x: rx, y: ry });
+      }));
+      if (emptyCells.length > 5) {
+        const target = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        newGrid[target.y][target.x] = -1;
+      }
     }
 
     const finalScore = score + currentScoreAdd;
     setScore(finalScore);
     if (finalScore > bestScore) setBestScore(finalScore);
-    
+
     setGrid(newGrid);
     generateNextTile(finalScore);
     checkGameOver(newGrid);
@@ -195,7 +195,7 @@ const App: React.FC = () => {
   const renderTile = (val: TileValue, x: number, y: number) => {
     if (val === null) {
       return (
-        <div 
+        <div
           key={`slot-${x}-${y}`}
           onClick={() => handlePlaceTile(x, y)}
           className="w-full h-full rounded-lg transition-colors cursor-pointer group flex items-center justify-center relative overflow-hidden"
@@ -213,13 +213,13 @@ const App: React.FC = () => {
     const isNewMerged = lastMergePos?.x === x && lastMergePos?.y === y;
 
     return (
-      <div 
+      <div
         key={`tile-${x}-${y}-${val}`}
         className={`w-full h-full rounded-lg flex items-center justify-center text-2xl font-black shadow-md transform transition-all 
           ${'animate-in zoom-in duration-300'}
           ${isStone ? 'border-2 border-white/10 shadow-inner' : ''}`}
-        style={{ 
-          backgroundColor: isStone ? (themeIndex === 0 ? "#4B5563" : "#111827") : bgColor, 
+        style={{
+          backgroundColor: isStone ? (themeIndex === 0 ? "#4B5563" : "#111827") : bgColor,
           color: textColor,
           boxShadow: isNewMerged ? `0 0 20px ${currentTheme.accent}44` : 'none'
         }}
@@ -236,7 +236,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen w-full flex flex-col items-center p-4 transition-colors duration-500 overflow-hidden"
       style={{ backgroundColor: currentTheme.bg, color: currentTheme.textPrimary }}
     >
@@ -252,7 +252,7 @@ const App: React.FC = () => {
           </div>
         </div>
         <div className="flex gap-2">
-           <button 
+          <button
             onClick={() => setIsSettingsOpen(true)}
             className="p-3 rounded-2xl hover:brightness-110 shadow-sm"
             style={{ backgroundColor: currentTheme.slot }}
@@ -274,8 +274,14 @@ const App: React.FC = () => {
             <span className="text-sm font-black uppercase tracking-[0.2em] opacity-50" style={{ color: currentTheme.textPrimary }}>Best</span>
           </div>
           <span className="text-4xl sm:text-5xl font-black leading-none tabular-nums">{bestScore}</span>
-          <button onClick={() => handleShare(bestScore)} className="absolute top-2 right-2 p-1.5 opacity-30 hover:opacity-100 bg-black/10 rounded-lg">
-            <Share2 size={16} style={{ color: currentTheme.textPrimary }} />
+          <button
+            onClick={() => handleShare(bestScore)}
+            className="absolute top-2 right-2 p-1.5 opacity-70 hover:opacity-100 bg-black/20 rounded-lg transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current"
+            aria-label="Share best score"
+            title="Share your best score"
+            style={{ color: currentTheme.textPrimary }}
+          >
+            <Share2 size={16} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -284,10 +290,10 @@ const App: React.FC = () => {
       <div className="w-full max-w-md flex justify-between items-end mb-6 px-2">
         <div className="flex flex-col gap-2">
           <span className="text-xs font-black opacity-50 tracking-widest" style={{ color: currentTheme.textPrimary }}>NEXT FLUX</span>
-          <div 
+          <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-xl border-4 transition-all duration-300"
-            style={{ 
-              backgroundColor: TILE_COLORS[nextTile], 
+            style={{
+              backgroundColor: TILE_COLORS[nextTile],
               color: nextTile <= 4 ? "#776e65" : "#ffffff",
               borderColor: currentTheme.accent
             }}
@@ -295,8 +301,8 @@ const App: React.FC = () => {
             {nextTile}
           </div>
         </div>
-        
-        <button 
+
+        <button
           onClick={resetGame}
           className="flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest shadow-lg hover:brightness-110"
           style={{ backgroundColor: currentTheme.accent, color: '#fff' }}
@@ -307,35 +313,35 @@ const App: React.FC = () => {
       </div>
 
       {/* Game Board */}
-      <div 
+      <div
         className="w-full max-w-md aspect-square rounded-[2rem] p-4 shadow-2xl relative border-4"
         style={{ backgroundColor: currentTheme.board, borderColor: currentTheme.slot }}
       >
         <div className="w-full h-full grid grid-cols-5 grid-rows-5 gap-2 relative">
           {grid.map((row, y) => row.map((val, x) => renderTile(val, x, y)))}
-          
+
           {/* Explosion Layer */}
           {explosions.map(exp => (
-             <div 
-              key={exp.id} 
+            <div
+              key={exp.id}
               className="absolute pointer-events-none"
-              style={{ 
+              style={{
                 left: `${(exp.x / GRID_SIZE) * 100 + (100 / GRID_SIZE / 2)}%`,
                 top: `${(exp.y / GRID_SIZE) * 100 + (100 / GRID_SIZE / 2)}%`
               }}
-             >
-                {[...Array(8)].map((_, i) => (
-                  <div 
-                    key={i}
-                    className="absolute w-2.5 h-2.5 rounded-full animate-particle"
-                    style={{ 
-                      backgroundColor: exp.color,
-                      '--tw-translate-x': `${Math.cos(i * 45 * Math.PI / 180) * 100}px`,
-                      '--tw-translate-y': `${Math.sin(i * 45 * Math.PI / 180) * 100}px`
-                    } as React.CSSProperties}
-                  />
-                ))}
-             </div>
+            >
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-2.5 h-2.5 rounded-full animate-particle"
+                  style={{
+                    backgroundColor: exp.color,
+                    '--tw-translate-x': `${Math.cos(i * 45 * Math.PI / 180) * 100}px`,
+                    '--tw-translate-y': `${Math.sin(i * 45 * Math.PI / 180) * 100}px`
+                  } as React.CSSProperties}
+                />
+              ))}
+            </div>
           ))}
         </div>
 
@@ -356,7 +362,7 @@ const App: React.FC = () => {
       {/* Settings Modal */}
       {isSettingsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div 
+          <div
             className="w-full max-w-sm rounded-[3rem] p-10 relative shadow-2xl border-4"
             style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.accent }}
           >
@@ -367,14 +373,14 @@ const App: React.FC = () => {
                 <span className="text-[12px] font-black uppercase tracking-[0.3em] opacity-40 ml-1" style={{ color: currentTheme.textPrimary }}>Theme</span>
                 <div className="grid grid-cols-3 gap-4">
                   {THEMES.map((t, idx) => (
-                    <button 
-                      key={t.id} 
-                      onClick={() => setThemeIndex(idx)} 
-                      className={`h-16 rounded-[1.5rem] border-4 ${themeIndex === idx ? 'shadow-2xl' : 'opacity-80 hover:opacity-100'}`} 
-                      style={{ 
-                        backgroundColor: t.bg, 
-                        borderColor: t.accent 
-                      }} 
+                    <button
+                      key={t.id}
+                      onClick={() => setThemeIndex(idx)}
+                      className={`h-16 rounded-[1.5rem] border-4 ${themeIndex === idx ? 'shadow-2xl' : 'opacity-80 hover:opacity-100'}`}
+                      style={{
+                        backgroundColor: t.bg,
+                        borderColor: t.accent
+                      }}
                     />
                   ))}
                 </div>

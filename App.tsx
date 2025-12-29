@@ -18,7 +18,20 @@ const App: React.FC = () => {
     Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null))
   );
   const [score, setScore] = useState(0);
-  const [bestScore, setBestScore] = useState(0);
+  const [bestScore, setBestScore] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('core_flux_save');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          return data.bestScore || 0;
+        } catch (e) {
+          console.error("Failed to load best score", e);
+        }
+      }
+    }
+    return 0;
+  });
   const [nextTile, setNextTile] = useState(2);
   const [gameOver, setGameOver] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -185,7 +198,10 @@ const App: React.FC = () => {
 
     const finalScore = score + currentScoreAdd;
     setScore(finalScore);
-    if (finalScore > bestScore) setBestScore(finalScore);
+    if (finalScore > bestScore) {
+      const newBestScore = Math.max(finalScore, bestScore);
+      setBestScore(newBestScore);
+    }
 
     setGrid(newGrid);
     generateNextTile(finalScore);
@@ -399,14 +415,13 @@ const App: React.FC = () => {
                 </button>
               </div>
             </div>
-            <button onClick={() => setIsSettingsOpen(false)} className="w-full mt-12 py-6 rounded-[2rem] font-black text-2xl shadow-xl hover:brightness-110" style={{ backgroundColor: currentTheme.accent, color: '#fff' }}>INITIALIZE</button>
           </div>
         </div>
       )}
 
       {/* Footer Branding */}
       <p className="mt-auto mb-6 text-[11px] font-black opacity-20 uppercase tracking-[0.5em]">
-        CORE FLUX LABS // BUILD 05.2025
+        CORE FLUX LABS // BUILD 12.2025
       </p>
     </div>
   );

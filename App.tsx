@@ -247,14 +247,14 @@ const App: React.FC = () => {
             CORE FLUX
           </h1>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: getPhase().color }} />
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getPhase().color }} />
             <span className="text-[10px] font-black tracking-[0.2em] opacity-60 uppercase">{getPhase().label}</span>
           </div>
         </div>
         <div className="flex gap-2">
            <button 
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3 rounded-2xl transition-all active:scale-90 hover:brightness-110 shadow-sm"
+            className="p-3 rounded-2xl hover:brightness-110 shadow-sm"
             style={{ backgroundColor: currentTheme.slot }}
           >
             <Settings size={22} style={{ color: currentTheme.textPrimary }} />
@@ -274,7 +274,7 @@ const App: React.FC = () => {
             <span className="text-sm font-black uppercase tracking-[0.2em] opacity-50" style={{ color: currentTheme.textPrimary }}>Best</span>
           </div>
           <span className="text-4xl sm:text-5xl font-black leading-none tabular-nums">{bestScore}</span>
-          <button onClick={() => handleShare(bestScore)} className="absolute top-2 right-2 p-1.5 opacity-30 hover:opacity-100 transition-opacity bg-black/10 rounded-lg">
+          <button onClick={() => handleShare(bestScore)} className="absolute top-2 right-2 p-1.5 opacity-30 hover:opacity-100 bg-black/10 rounded-lg">
             <Share2 size={16} style={{ color: currentTheme.textPrimary }} />
           </button>
         </div>
@@ -298,7 +298,7 @@ const App: React.FC = () => {
         
         <button 
           onClick={resetGame}
-          className="flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest transition-all active:scale-95 shadow-lg hover:brightness-110"
+          className="flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest shadow-lg hover:brightness-110"
           style={{ backgroundColor: currentTheme.accent, color: '#fff' }}
         >
           <RotateCcw size={18} />
@@ -346,8 +346,8 @@ const App: React.FC = () => {
             <h2 className="text-5xl font-black mb-2 italic tracking-tighter uppercase">Grid Collapsed</h2>
             <p className="text-xl mb-10 font-medium opacity-60">Energy Stabilized at: {score}</p>
             <div className="flex flex-col gap-4 w-full max-w-[280px]">
-              <button onClick={resetGame} className="w-full py-5 bg-white text-black rounded-2xl font-black text-xl hover:scale-105 active:scale-95 transition-transform shadow-xl">REBOOT</button>
-              <button onClick={() => handleShare()} className="w-full py-4 flex items-center justify-center gap-3 rounded-2xl font-black text-lg hover:scale-105 active:scale-95 transition-transform shadow-xl border-2 border-white/20" style={{ backgroundColor: 'transparent', color: '#fff' }}><Share2 size={20} />TRANSMIT SCORE</button>
+              <button onClick={resetGame} className="w-full py-5 bg-white text-black rounded-2xl font-black text-xl shadow-xl">REBOOT</button>
+              <button onClick={() => handleShare()} className="w-full py-4 flex items-center justify-center gap-3 rounded-2xl font-black text-lg shadow-xl border-2 border-white/20" style={{ backgroundColor: 'transparent', color: '#fff' }}><Share2 size={20} />TRANSMIT SCORE</button>
             </div>
           </div>
         )}
@@ -360,17 +360,17 @@ const App: React.FC = () => {
             className="w-full max-w-sm rounded-[3rem] p-10 relative shadow-2xl border-4"
             style={{ backgroundColor: currentTheme.bg, borderColor: currentTheme.accent }}
           >
-            <button onClick={() => setIsSettingsOpen(false)} className="absolute top-8 right-8 p-2 rounded-full opacity-40 hover:opacity-100 transition-opacity"><X size={32} style={{ color: currentTheme.textPrimary }} /></button>
-            <h2 className="text-4xl font-black mb-12 text-center tracking-tighter" style={{ color: currentTheme.textPrimary }}>MODULES</h2>
+            <button onClick={() => setIsSettingsOpen(false)} className="absolute top-8 right-8 p-2 rounded-full opacity-40 hover:opacity-100"><X size={32} style={{ color: currentTheme.textPrimary }} /></button>
+            <h2 className="text-4xl font-black mb-12 text-center tracking-tighter" style={{ color: currentTheme.textPrimary }}>SETTINGS</h2>
             <div className="space-y-10">
               <div className="space-y-4">
-                <span className="text-[12px] font-black uppercase tracking-[0.3em] opacity-40 ml-1" style={{ color: currentTheme.textPrimary }}>Color Schema</span>
+                <span className="text-[12px] font-black uppercase tracking-[0.3em] opacity-40 ml-1" style={{ color: currentTheme.textPrimary }}>Theme</span>
                 <div className="grid grid-cols-3 gap-4">
                   {THEMES.map((t, idx) => (
                     <button 
                       key={t.id} 
                       onClick={() => setThemeIndex(idx)} 
-                      className={`h-16 rounded-[1.5rem] border-4 transition-all duration-300 ${themeIndex === idx ? 'scale-110 shadow-2xl' : 'opacity-30 grayscale hover:grayscale-0 hover:opacity-100 hover:scale-105'}`} 
+                      className={`h-16 rounded-[1.5rem] border-4 ${themeIndex === idx ? 'shadow-2xl' : 'opacity-30 grayscale hover:grayscale-0 hover:opacity-100'}`} 
                       style={{ 
                         backgroundColor: t.bg, 
                         borderColor: themeIndex === idx ? t.accent : t.slot 
@@ -382,7 +382,7 @@ const App: React.FC = () => {
               </div>
               <div className="space-y-4">
                 <span className="text-[12px] font-black uppercase tracking-[0.3em] opacity-40 ml-1" style={{ color: currentTheme.textPrimary }}>Preferences</span>
-                <button className="w-full flex items-center justify-between p-5 rounded-[2rem] transition-all active:scale-[0.98] shadow-inner" style={{ backgroundColor: currentTheme.slot }} onClick={() => setSfxOn(!sfxOn)}>
+                <button className="w-full flex items-center justify-between p-5 rounded-[2rem] shadow-inner" style={{ backgroundColor: currentTheme.slot }} onClick={() => setSfxOn(!sfxOn)}>
                   <div className="flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-black/20" style={{ color: currentTheme.textPrimary }}>{sfxOn ? <Volume2 size={24} /> : <VolumeX size={24} />}</div>
                     <span className="font-black text-lg tracking-tight" style={{ color: currentTheme.textPrimary }}>AUDIO FX</span>
@@ -393,7 +393,7 @@ const App: React.FC = () => {
                 </button>
               </div>
             </div>
-            <button onClick={() => setIsSettingsOpen(false)} className="w-full mt-12 py-6 rounded-[2rem] font-black text-2xl shadow-xl transition-all active:scale-95 hover:brightness-110" style={{ backgroundColor: currentTheme.accent, color: '#fff' }}>INITIALIZE</button>
+            <button onClick={() => setIsSettingsOpen(false)} className="w-full mt-12 py-6 rounded-[2rem] font-black text-2xl shadow-xl hover:brightness-110" style={{ backgroundColor: currentTheme.accent, color: '#fff' }}>INITIALIZE</button>
           </div>
         </div>
       )}

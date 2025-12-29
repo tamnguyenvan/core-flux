@@ -39,32 +39,57 @@ const App: React.FC = () => {
   const [sfxOn, setSfxOn] = useState(true);
   const [lastMergePos, setLastMergePos] = useState<{ x: number, y: number } | null>(null);
   const [explosions, setExplosions] = useState<Explosion[]>([]);
+  const [showGuide, setShowGuide] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const currentTheme = THEMES[themeIndex];
+
+  // Add this utility function before the App component
+  function getContrastColor(hexColor: string): string {
+    // If the hex color is in short format, convert it to full format
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
+    const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
+    const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
+
+    // Calculate relative luminance (per ITU-R BT.709)
+    const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+    // Return black for light colors, white for dark colors
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  }
 
   // --- Effects ---
   useEffect(() => {
     const saved = localStorage.getItem('core_flux_save');
     if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        setBestScore(data.bestScore || 0);
-        setThemeIndex(data.themeIndex ?? 0);
-        setSfxOn(data.sfxOn ?? true);
-      } catch (e) {
-        console.error("Failed to load save", e);
-      }
+      const data = JSON.parse(saved);
+      setBestScore(data.bestScore || 0);
+      setThemeIndex(data.themeIndex ?? 0);
+      setSfxOn(data.sfxOn ?? true);
+      setDontShowAgain(data.dontShowGuideAgain ?? false);
+      setShowGuide(!(data.dontShowGuideAgain ?? false));
+    } else {
+      setShowGuide(true);
     }
+
     generateNextTile(0);
+    setHasLoaded(true); // 🔑
   }, []);
 
+
   useEffect(() => {
+    if (!hasLoaded) return;
+
     localStorage.setItem('core_flux_save', JSON.stringify({
       bestScore,
       themeIndex,
-      sfxOn
+      sfxOn,
+      dontShowGuideAgain: dontShowAgain
     }));
-  }, [bestScore, themeIndex, sfxOn]);
+  }, [bestScore, themeIndex, sfxOn, dontShowAgain, hasLoaded]);
+
 
   // --- Game Logic ---
   const generateNextTile = (currentScore: number) => {
@@ -208,6 +233,18 @@ const App: React.FC = () => {
     checkGameOver(newGrid);
   };
 
+  const handleCloseGuide = () => {
+    setShowGuide(false);
+    if (dontShowAgain) {
+      localStorage.setItem('core_flux_save', JSON.stringify({
+        bestScore,
+        themeIndex,
+        sfxOn,
+        dontShowGuideAgain: true
+      }));
+    }
+  };
+
   const renderTile = (val: TileValue, x: number, y: number) => {
     if (val === null) {
       return (
@@ -250,6 +287,8 @@ const App: React.FC = () => {
     if (score > 2000) return { label: "PHASE: UNSTABLE", color: "#f59e0b" };
     return { label: "PHASE: STABLE", color: "#10b981" };
   };
+
+
 
   return (
     <div
@@ -370,6 +409,49 @@ const App: React.FC = () => {
             <div className="flex flex-col gap-4 w-full max-w-[280px]">
               <button onClick={resetGame} className="w-full py-5 bg-white text-black rounded-2xl font-black text-xl shadow-xl">REBOOT</button>
               <button onClick={() => handleShare()} className="w-full py-4 flex items-center justify-center gap-3 rounded-2xl font-black text-lg shadow-xl border-2 border-white/20" style={{ backgroundColor: 'transparent', color: '#fff' }}><Share2 size={20} />TRANSMIT SCORE</button>
+            </div>
+          </div>
+        )}
+
+        {showGuide && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div
+              className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 relative"
+              style={{ backgroundColor: currentTheme.bg, color: currentTheme.textPrimary }}
+            >
+              <h2 className="text-2xl font-bold mb-4">How to Play</h2>
+              <div className="space-y-3 mb-6">
+                <p>1. Click on an empty cell to place a tile</p>
+                <p>2. Tiles with the same number merge when placed adjacent to each other</p>
+                <p>3. Try to get the highest score possible!</p>
+                <p>4. Special tiles (✕) cannot be merged and block adjacent cells</p>
+              </div>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="dontShowAgain"
+                  checked={dontShowAgain}
+                  onChange={(e) => setDontShowAgain(e.target.checked)}
+                  className="mr-2 h-4 w-4"
+                />
+                <label htmlFor="dontShowAgain" className="text-sm">
+                  Don't show this guide again
+                </label>
+              </div>
+              <button
+                onClick={handleCloseGuide}
+                className="w-full py-3 px-4 rounded-lg font-bold transition-all duration-200
+    hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-offset-2
+    focus:ring-current focus:ring-offset-current/20"
+                style={{
+                  backgroundColor: currentTheme.accent,
+                  color: getContrastColor(currentTheme.accent), // This will ensure good contrast
+                  '--tw-ring-color': currentTheme.accent
+                }}
+                aria-label="Close the guide"
+              >
+                Got it!
+              </button>
             </div>
           </div>
         )}
